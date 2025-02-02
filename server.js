@@ -19,7 +19,7 @@ const db = async () => {
         user: process.env.MYSQL_USER,
         password: process.env.MYSQL_PASSWORD,
         database: process.env.MYSQL_DB,
-        port: process.env.MYSQL_PORT,
+        // port: process.env.MYSQL_PORT,
     });
 };
 
@@ -73,7 +73,7 @@ async function getBestMatch(userQuery) {
 async function getBestMatchUsingHF(userQuery) {
     async function query(data) {
         const response = await fetch(
-            "https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2",
+            "https:/-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2",
             {
                 headers: {
                     Authorization: `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
@@ -113,7 +113,7 @@ async function getBestMatchUsingHF(userQuery) {
 }
 
 
-app.post('/api/response', async (req, res) => {
+app.post('/response', async (req, res) => {
     const {question:userQuery} = req.body;
     if (!userQuery) return res.status(400).json({ error: "Question field required" });
     let bestMatchId
@@ -132,14 +132,14 @@ app.post('/api/response', async (req, res) => {
 });
 
 // Route to get the client IP address
-app.get('/api/ip', (req, res) => {
+app.get('/ip', (req, res) => {
     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'Unknown IP';
     const formattedIp = ip.startsWith('::ffff:') ? ip.slice(7) : ip;
     res.json({ ip: formattedIp });
 });
 
 // Route to suggest questions based on input
-app.post('/api/question/suggest/input', async (req, res) => {
+app.post('/question/suggest/input', async (req, res) => {
     const { input } = req.body;
     if (!input) return res.status(400).json({ error: "Input field required" });
 
@@ -157,7 +157,7 @@ app.post('/api/question/suggest/input', async (req, res) => {
 });
 
 // Route to get top questions by count
-app.get('/api/question/suggest/:count', async (req, res) => {
+app.get('/question/suggest/:count', async (req, res) => {
     const count = parseInt(req.params.count, 10);
     if (isNaN(count) || count <= 0) return res.status(400).json({ error: "Invalid count parameter" });
 
