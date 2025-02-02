@@ -156,6 +156,27 @@ app.post('/question/suggest/input', async (req, res) => {
     }
 });
 
+// Route to suggest questions based on input
+app.post('/question/suggest/match', async (req, res) => {
+    const { input } = req.body;
+    if (!input) return res.status(400).json({ error: "Input field required" });
+
+    let bestMatchId;
+    try {
+        bestMatchId = await getBestMatchUsingHF(input);
+    } catch (err) {
+        bestMatchId = await getBestMatch(input);
+    }
+
+    if (bestMatchId) {
+        const matchedQuestion = (await getQuestionsFromDb()).find(q => q.id === bestMatchId)?.question;
+        res.json({ matchedQuestion });
+    } else {
+        res.json({ matchedQuestion: "No suitable match found." });
+    }
+});
+
+
 // Route to get top questions by count
 app.get('/question/suggest/:count', async (req, res) => {
     const count = parseInt(req.params.count, 10);
